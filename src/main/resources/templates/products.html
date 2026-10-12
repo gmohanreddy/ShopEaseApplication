@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEase - Product Catalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #2c3e50;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        header span {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        /* ── Main container ── */
+        .container {
+            max-width: 1100px;
+            margin: 36px auto;
+            padding: 0 20px;
+        }
+
+        /* ── Summary bar ── */
+        .summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .summary h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        /* ── Table ── */
+        .table-wrapper {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+        }
+
+        thead th {
+            padding: 14px 20px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #ecf0f1;
+            transition: background 0.2s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        tbody td {
+            padding: 14px 20px;
+            font-size: 14px;
+        }
+
+        .id-cell {
+            color: #95a5a6;
+            font-weight: 600;
+            width: 60px;
+        }
+
+        .name-cell {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .category-cell {
+            color: #7f8c8d;
+        }
+
+        .price-cell {
+            font-weight: 700;
+            color: #27ae60;
+        }
+
+        /* ── Stock badges ── */
+        .stock-high {
+            background: #d5f5e3;
+            color: #1e8449;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stock-low {
+            background: #fef9e7;
+            color: #d68910;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stock-out {
+            background: #fadbd8;
+            color: #c0392b;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ── Empty state ── */
+        .empty-row td {
+            text-align: center;
+            padding: 48px;
+            color: #95a5a6;
+            font-size: 15px;
+        }
+
+        /* ── Pagination ── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 28px;
+            padding-bottom: 20px;
+        }
+
+        .pagination a {
+            background: white;
+            color: #3498db;
+            padding: 8px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .pagination a:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .pagination .page-info {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #95a5a6;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <h1>🛒 ShopEase</h1>
+    <span>E-Commerce Order Management System</span>
+</header>
+
+<div class="container">
+
+    <!-- Summary bar -->
+    <div class="summary">
+        <h2>Product Catalog</h2>
+        <span class="badge"
+              th:text="${totalElements} + ' Products'">0 Products</span>
+    </div>
+
+    <!-- Product table -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price (Rs.)</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <!-- th:each iterates the "products" list from Model -->
+                <tr th:each="product : ${products}">
+
+                    <td class="id-cell"
+                        th:text="${product.productId}">1</td>
+
+                    <td class="name-cell"
+                        th:text="${product.name}">Product Name</td>
+
+                    <td class="category-cell"
+                        th:text="${product.categoryName}">Category</td>
+
+                    <td class="price-cell"
+                        th:text="'Rs. ' + ${product.price}">Rs. 0.00</td>
+
+                    <!-- th:if / th:unless for conditional rendering -->
+                    <td>
+                        <span th:if="${product.stock == 0}"
+                              class="stock-out">Out of Stock</span>
+
+                        <span th:if="${product.stock > 0 and product.stock <= 10}"
+                              class="stock-low"
+                              th:text="${product.stock} + ' left'">Low</span>
+
+                        <span th:if="${product.stock > 10}"
+                              class="stock-high"
+                              th:text="${product.stock} + ' available'">In Stock</span>
+                    </td>
+                </tr>
+
+                <!-- Empty state — shown when no products exist -->
+                <tr class="empty-row"
+                    th:if="${#lists.isEmpty(products)}">
+                    <td colspan="5">
+                        No products found. Add products via the API first.
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination"
+         th:if="${totalPages > 1}">
+
+        <!-- Previous button — only shown if not on first page -->
+        <a th:if="${currentPage > 0}"
+           th:href="@{/products(page=${currentPage - 1}, size=8)}">&laquo; Previous</a>
+
+        <span class="page-info"
+              th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">
+            Page 1 of 1
+        </span>
+
+        <!-- Next button — only shown if more pages exist -->
+        <a th:if="${currentPage + 1 < totalPages}"
+           th:href="@{/products(page=${currentPage + 1}, size=8)}">Next &raquo;</a>
+
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+    &copy; 2026 ShopEase &mdash; Built with Spring Boot &amp; Thymeleaf
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+package com.shopease.repository;
+
+import com.shopease.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+
+    // Spring generates: SELECT * FROM categories WHERE category_name = ?
+    Optional<Category> findByCategoryName(String categoryName);
+
+    boolean existsByCategoryName(String categoryName);
+}
