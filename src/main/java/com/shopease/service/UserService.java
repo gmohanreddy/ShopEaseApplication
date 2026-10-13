@@ -1,3 +1,4 @@
+```java
 package com.shopease.service;
 
 import com.shopease.dto.UserRequest;
@@ -39,12 +40,14 @@ public class UserService {
 
         User saved = userRepository.save(user);
         log.info("User created with id: {}", saved.getUserId());
+
         return mapToResponse(saved);
     }
 
     @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
         log.debug("Fetching all users");
+
         return userRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -54,21 +57,27 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
         log.debug("Fetching user id: {}", id);
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("User not found with id: {}", id);
                     return new ResourceNotFoundException(
                             "User not found with id: " + id);
                 });
+
         return mapToResponse(user);
     }
 
     private UserResponse mapToResponse(User user) {
         return UserResponse.builder()
-                .userId(user.getUserId())
+                .id(user.getUserId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .role(user.getRole() != null
+                        ? user.getRole().toString()
+                        : "USER")
                 .build();
     }
 }
+```

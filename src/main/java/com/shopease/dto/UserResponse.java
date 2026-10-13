@@ -1,3 +1,4 @@
+```java
 package com.shopease.dto;
 
 import lombok.AllArgsConstructor;
@@ -11,8 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserResponse {
 
-    private Long userId;
+    private Long id;
     private String name;
     private String email;
     private String phone;
+    private String role;
 }

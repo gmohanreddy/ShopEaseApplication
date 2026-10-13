@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProductCatalogPage from './pages/ProductCatalogPage';
 import AdminProductsPage from './pages/AdminProductsPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 import PlaceOrderPage from './pages/PlaceOrderPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 
@@ -17,14 +18,13 @@ function App() {
       <BrowserRouter>
         <div className="app-layout">
           <Navbar />
+
           <main className="main-content">
             <Routes>
-              {/* Public Routes */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/products" element={<ProductCatalogPage />} />
 
-              {/* Authenticated User Routes */}
               <Route
                 path="/order"
                 element={
@@ -33,6 +33,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
               <Route
                 path="/orders"
                 element={
@@ -42,7 +43,6 @@ function App() {
                 }
               />
 
-              {/* Admin Only Routes */}
               <Route
                 path="/admin/products"
                 element={
@@ -52,8 +52,19 @@ function App() {
                 }
               />
 
-              {/* Fallback Catch-all Route */}
-              <Route path="*" element={<Navigate to="/products" replace />} />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminUsersPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="*"
+                element={<Navigate to="/products" replace />}
+              />
             </Routes>
           </main>
         </div>
