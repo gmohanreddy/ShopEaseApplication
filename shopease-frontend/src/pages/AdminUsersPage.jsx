@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
 
@@ -13,13 +14,15 @@ function AdminUsersPage() {
         const response = await axiosInstance.get('/api/users');
         setUsers(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
-        setError(
-          err.response?.status === 401
-            ? 'Please log in again.'
-            : err.response?.status === 403
-              ? 'Admin access is required.'
-              : 'Could not load users. Check the backend and API URL.'
-        );
+        if (err.response?.status === 401) {
+          setError('Please log in again.');
+        } else if (err.response?.status === 403) {
+          setError('Admin access is required.');
+        } else {
+          setError(
+            'Could not load users. Check the backend and API URL.'
+          );
+        }
       } finally {
         setLoading(false);
       }
@@ -29,7 +32,7 @@ function AdminUsersPage() {
   }, []);
 
   const filteredUsers = users.filter((user) =>
-    [user.id, user.name, user.email, user.role]
+    [user.id, user.userId, user.name, user.email, user.phone]
       .filter(Boolean)
       .some((value) =>
         String(value).toLowerCase().includes(search.toLowerCase())
@@ -43,12 +46,13 @@ function AdminUsersPage() {
 
       <input
         type="text"
-        placeholder="Search users by name, email, ID or role..."
+        placeholder="Search by ID, name, or email..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       {loading && <p>Loading users...</p>}
+
       {error && <p role="alert">{error}</p>}
 
       {!loading && !error && (
@@ -65,16 +69,17 @@ function AdminUsersPage() {
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Role</th>
+                    <th>Phone</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {filteredUsers.map((user) => (
-                    <tr key={user.id}>
-                      <td>{user.id}</td>
+                    <tr key={user.id ?? user.userId}>
+                      <td>{user.id ?? user.userId ?? '—'}</td>
                       <td>{user.name || '—'}</td>
                       <td>{user.email || '—'}</td>
-                      <td>{user.role || '—'}</td>
+                      <td>{user.phone || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
